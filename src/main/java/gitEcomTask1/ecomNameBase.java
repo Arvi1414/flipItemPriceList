@@ -1,16 +1,26 @@
 package gitEcomTask1;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,8 +29,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class ecomNameBase {
-
-	public static void main(String[] args) throws InterruptedException {
+	
+	public static void main(String[] args) throws InterruptedException, IOException {
 		
 		
 		WebDriverManager.chromedriver().setup();
@@ -50,7 +60,13 @@ public class ecomNameBase {
 		
 		String name = null;
 		String price = null;
-		Map<String,String> newMap = new LinkedHashMap<>();
+		Map<String,Integer> newMap = new LinkedHashMap<>();
+		
+		File loc = new File("D:\\AutomationTestingFiles\\gitEcomTask1\\src\\test\\resources\\dataFile.xlsx");
+		
+		Workbook workFile = new XSSFWorkbook();
+		
+		Sheet sheet = workFile.createSheet("ItemDetails");	
 		
 		List itemNameList = new ArrayList();
 		List itemPriceList = new ArrayList();
@@ -59,10 +75,15 @@ public class ecomNameBase {
 			
 			WebElement item = itemName.get(i);
 			name = item.getText();
+			
+			Row row = sheet.createRow(i);
 			itemNameList.add(name);
 			
 			WebElement item2 = itemPrice.get(i);
 			price = item2.getText();
+			Cell cell = row.createCell(0);
+			cell.setCellValue(name);
+			Cell cell1 = row.createCell(1);
 			
 			
 			System.out.println(" Product Name : " + name);
@@ -79,10 +100,17 @@ public class ecomNameBase {
 				
 			int intPrice = Integer.parseInt(priceNew);
 			itemPriceList.add(intPrice);
-			
-			newMap.put(name, priceNew);
+			cell1.setCellValue(intPrice);
+			newMap.put(name, intPrice);
 						
 		}
+		
+		newMap.get(name);
+
+		FileOutputStream OP = new FileOutputStream(loc);
+
+		workFile.write(OP);
+		
 		
 		System.out.println("Size of the Map " + newMap.size());
 		
